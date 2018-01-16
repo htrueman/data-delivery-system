@@ -1,0 +1,17 @@
+*.sqlite3
+*.pyc
+*.pyo
+*.swp
+*.swo
+*.swn
+*.esproj
+.idea
+*~
+build
+.noseids
+*.dat
+.env
+*.log
+staticfiles
+templates_makeup
+env_vars.sh
