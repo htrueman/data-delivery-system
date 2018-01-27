@@ -13,5 +13,5 @@ build
 .env
 *.log
 staticfiles
-templates_makeup
+media
 env_vars.sh
