@@ -13,7 +13,7 @@ def get_env_variable(var_name):
 
 # Build paths inside the project like this: root('some_path')
 def root(*dirs):
-    base_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+    base_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'dds')
     return os.path.abspath(os.path.join(base_dir, *dirs))
 
 
@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'dds.core'
 ]
 
 MIDDLEWARE = [
@@ -46,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'dds_project.urls'
+ROOT_URLCONF = 'configs.urls'
 
 TEMPLATES = [
     {
@@ -64,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dds_project.wsgi.application'
+WSGI_APPLICATION = 'configs.wsgi.application'
 
 
 # Password validation
@@ -103,3 +106,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = root('static')
 STATICFILES_DIRS = [root('staticfiles')]
+
+
+AUTH_USER_MODEL = 'core.SystemUser'
