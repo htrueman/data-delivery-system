@@ -1,11 +1,14 @@
-from django.views.generic import FormView
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
-from dds_project.dds.core.forms import ObtainGitRepoCredentialsForm
+from .forms import ObtainGitRepoCredentialsForm
 
 
-class ObtainGitRepoCredentials(FormView):
+class ObtainGitRepoCredentials(CreateView):
     form_class = ObtainGitRepoCredentialsForm
     template_name = 'obtain_git_repo_form.html'
+    # success_url = reverse_lazy('core:controller')
 
-    def form_valid(self, form):
-        pass
+    # def form_valid(self, form):
+    #     new_repo = form.save()
+    #     return super().form_valid(form)

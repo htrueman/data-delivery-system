@@ -8,7 +8,7 @@ class SystemUserManager(BaseUserManager):
 
     def _create_user(self, username, email, password, **extra_fields):
         """
-        Creates and saves a User with the given username, email and password.
+        Creates and saves a user with the given username, email and password.
         """
         if not email:
             raise ValueError('Email is required.')
@@ -31,12 +31,18 @@ class SystemUserManager(BaseUserManager):
 
 
 class SystemUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=40, unique=True)
-    email = models.EmailField(max_length=50)
+    username = models.CharField(max_length=40)
+    email = models.EmailField(max_length=50, unique=True)
+    is_active = models.BooleanField(default=True)
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     objects = SystemUserManager()
+
+    @property
+    def is_staff(self):
+        return self.is_superuser
 
 
 class GitRepository(models.Model):
@@ -44,3 +50,6 @@ class GitRepository(models.Model):
     password = models.CharField(max_length=128)
     deep_link = models.CharField(max_length=150)
     user = models.ForeignKey('SystemUser', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Git repositories'

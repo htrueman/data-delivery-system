@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import SystemUser, GitRepository
+
+admin.site.register(SystemUser)
+admin.site.register(GitRepository)
