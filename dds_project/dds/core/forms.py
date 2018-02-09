@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from .models import GitRepository
 
-user = get_user_model()
+User = get_user_model()
 
 
 class ObtainGitRepoCredentialsForm(ModelForm):
@@ -11,10 +12,13 @@ class ObtainGitRepoCredentialsForm(ModelForm):
         model = GitRepository
         fields = ['username', 'password', 'deep_link']
 
-    # def save(self, commit=True):
-    #     # new_user = user.objects.create(
-    #     #     username=self.cleaned_data['username'],
-    #     #     password=self.cleaned_data['password']
-    #     # )
-    #     new_repo = GitRepository.objects.create(**self.cleaned_data)
-    #     return new_repo
+
+class LightSignUpForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['email']
+
+    def validate_email(self):
+        user_with_same_email = User.objects.filter(email=self.cleaned_data['email'])
+        if user_with_same_email:
+            raise ValidationError('User is already registered')
