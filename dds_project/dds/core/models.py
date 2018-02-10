@@ -1,5 +1,6 @@
 from django.contrib.auth import password_validation
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
@@ -52,12 +53,18 @@ class GitRepository(models.Model):
     deep_link = models.CharField(max_length=150)
     user = models.ForeignKey('SystemUser', on_delete=models.CASCADE)
 
+    _password = None
+
     class Meta:
         verbose_name_plural = 'Git repositories'
 
     def save(self, *args, **kwargs):
+        self.set_password(self.password)
         super().save(*args, **kwargs)
         if self._password is not None:
             password_validation.password_changed(self._password, self)
             self._password = None
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        self._password = raw_password
