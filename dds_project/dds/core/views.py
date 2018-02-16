@@ -1,4 +1,3 @@
-from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView

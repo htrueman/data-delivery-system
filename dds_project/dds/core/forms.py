@@ -25,4 +25,3 @@ class LightSignUpForm(ModelForm):
         user_with_same_email = User.objects.filter(email=self.cleaned_data['email'])
         if user_with_same_email:
             raise ValidationError('User is already registered')
-

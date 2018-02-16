@@ -1,4 +1,6 @@
 import os
+import sys
+
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -13,11 +15,14 @@ def get_env_variable(var_name):
 
 # Build paths inside the project like this: root('some_path')
 def root(*dirs):
-    base_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'dds')
+    base_dir = os.path.join(os.path.dirname(__file__), '..', '..')
     return os.path.abspath(os.path.join(base_dir, *dirs))
 
 
 BASE_DIR = root()
+APPS_ROOT = root('dds')
+
+sys.path.insert(0, os.path.join(APPS_ROOT))
 
 
 SECRET_KEY = get_env_variable('SECRET_KEY')
@@ -36,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'dds.core'
+    'dds.core',
+    'dds.local_spider_manager'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +60,7 @@ ROOT_URLCONF = 'configs.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [root('templates')],
+        'DIRS': [os.path.join(APPS_ROOT, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,8 +110,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = root('static')
-STATICFILES_DIRS = [root('staticfiles')]
+STATIC_ROOT = os.path.join(APPS_ROOT, 'static')
+STATICFILES_DIRS = [os.path.join(APPS_ROOT, 'staticfiles')]
 
 
 AUTH_USER_MODEL = 'core.SystemUser'

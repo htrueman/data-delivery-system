@@ -19,5 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', include('dds.core.urls'))
+    path('', include('dds.core.urls')),
+    path('manager/', include('dds.local_spider_manager.urls'))
 ]
