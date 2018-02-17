@@ -110,8 +110,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(APPS_ROOT, 'static')
-STATICFILES_DIRS = [os.path.join(APPS_ROOT, 'staticfiles')]
+STATIC_ROOT = os.path.join(APPS_ROOT, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(APPS_ROOT, 'static')]
 
 
 AUTH_USER_MODEL = 'core.SystemUser'
