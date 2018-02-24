@@ -122,3 +122,6 @@ STATICFILES_DIRS = [os.path.join(APPS_ROOT, 'static')]
 
 
 AUTH_USER_MODEL = 'core.SystemUser'
+
+
+CLONED_GIT_REPOS_ROOT = root('cloned_repos')
