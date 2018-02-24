@@ -1,0 +1,14 @@
+{% load static %}
+
+<html>
+<head>
+    <title>DDS</title>
+</head>
+<body>
+    {% block content %}{% endblock %}
+
+    <!-- JS includes -->
+    <script type="module" src="{% static 'js/spider_manager_core.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
