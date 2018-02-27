@@ -14,3 +14,5 @@ DATABASES = {
         'PORT': os.getenv('PG_PORT', '5432')
     }
 }
+
+WS4REDIS_SUBSCRIBER = 'ws4redis.django_runserver.application'

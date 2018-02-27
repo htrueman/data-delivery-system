@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'git',
+    'ws4redis',
+    'rest_framework',
 
     'cloned_repos',
 
@@ -75,12 +77,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ws4redis.context_processors.default',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'configs.wsgi.application'
+# WSGI_APPLICATION = 'configs.wsgi.application'
 
 
 # Password validation
@@ -125,3 +128,13 @@ AUTH_USER_MODEL = 'core.SystemUser'
 
 
 CLONED_GIT_REPOS_ROOT = root('cloned_repos')
+
+
+# Websockets/redis
+
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_EXPIRE = 7200
+WS4REDIS_PREFIX = 'ws'
+
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_PREFIX = 'session'
