@@ -3,9 +3,19 @@
 <html>
 <head>
     <title>DDS</title>
+
+    <!-- CSS includes -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body>
-    {% block content %}{% endblock %}
+    <div class="head col-md-12">
+        <a href="#" class="btn btn-primary sign-in-btn">Sign in</a>
+    </div>
+    <div class="body col-md-12">
+        {% block content %}{% endblock %}
+    </div>
 
     <!-- JS includes -->
     <script src="{% static 'js/main.js' %}"></script>

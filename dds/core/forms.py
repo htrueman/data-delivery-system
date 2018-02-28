@@ -4,6 +4,8 @@ from threading import Thread
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, PasswordInput
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
 from .models import GitRepository
 from .helpers import do_git_clone
@@ -11,7 +13,17 @@ from .helpers import do_git_clone
 User = get_user_model()
 
 
-class ObtainGitRepoCredentialsForm(ModelForm):
+class InitNarrowForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'narrow-form'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class ObtainGitRepoCredentialsForm(InitNarrowForm):
     class Meta:
         model = GitRepository
         fields = ['username', 'password', 'deep_link']
@@ -35,7 +47,7 @@ class ObtainGitRepoCredentialsForm(ModelForm):
         return super().clean()
 
 
-class LightSignUpForm(ModelForm):
+class LightSignUpForm(InitNarrowForm):
     class Meta:
         model = User
         fields = ['email']

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'git',
     'ws4redis',
     'rest_framework',
+    'crispy_forms',
 
     'cloned_repos',
 
@@ -133,8 +134,13 @@ CLONED_GIT_REPOS_ROOT = root('cloned_repos')
 # Websockets/redis
 
 WEBSOCKET_URL = '/ws/'
-WS4REDIS_EXPIRE = 7200
+WS4REDIS_EXPIRE = 0
 WS4REDIS_PREFIX = 'ws'
 
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS_PREFIX = 'session'
+
+
+# Crispy forms
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
