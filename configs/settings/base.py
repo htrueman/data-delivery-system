@@ -51,8 +51,8 @@ INSTALLED_APPS = [
 
     'cloned_repos',
 
-    'dds.core',
-    'dds.local_spider_manager'
+    'core',
+    'local_spider_manager',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,14 @@
+#narrow-form, .narrow-header {
+    width: 35%;
+    margin: auto;
+}
+
+#narrow-form {
+    margin-top: 20px;
+}
+
+.narrow-header {
+    font-size: 24pt;
+    font-weight: bold;
+    padding-top: 25px;
+}

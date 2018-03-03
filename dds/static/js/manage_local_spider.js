@@ -18,7 +18,10 @@ export class LocalSpiderController {
                 'Content-Type': 'application/json; charset=utf-8',
                 'X-CSRFToken': csrftoken
             },
-            body: JSON.stringify({run_spider: true})
+            body: JSON.stringify({
+                id: controllerId,
+                run_spider: true
+            })
         });
     }
 }

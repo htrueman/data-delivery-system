@@ -1,15 +1,14 @@
-import json
-import git
-
 from django.views.generic import DetailView
-from dds.core.models import GitRepository
+
+from core.models import GitRepository
+from .models import GitRepoController
 
 
-class GitRepoController(DetailView):
+class GitRepoInfo(DetailView):
     model = GitRepository
-    template_name = 'manage_local_spider.html'
+    template_name = 'local_spider_manager/manage_local_spider.html'
 
-    def post(self, request, *args, **kwargs):
-        command = json.loads(request.body)
-        if command.get('run_spider'):
-            pass
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['controller'] = GitRepoController.objects.get_or_create(repo=self.object)
+        return context_data

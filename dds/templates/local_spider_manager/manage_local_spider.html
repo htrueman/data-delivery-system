@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="subheader">
+        Manage git repo, url: <a href="{{ object.deep_link }}">{{ object.deep_link }}</a>
+    </div>
+    <input type="button" class="btn bg-success" id="run-spider" value="Run">
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        const controllerId = '{{ controller.id }}';
+        const runSpiderPath = '{% url "local_spider_manager:api:controller" %}';
+    </script>
+{% endblock %}

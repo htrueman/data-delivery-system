@@ -68,3 +68,6 @@ class GitRepository(models.Model):
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
         self._password = raw_password
+
+    def __str__(self):
+        return '{}'.format(self.deep_link)

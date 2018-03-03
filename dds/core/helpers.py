@@ -1,4 +1,6 @@
 import os
+import re
+
 from git import Repo
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
@@ -10,9 +12,11 @@ async def do_git_clone(username, url):
     redis_publisher = RedisPublisher(facility='check-git-clone-status', broadcast=True)
 
     try:
+        pat = re.compile('[\W]+', re.UNICODE)
+        repo_dir_name = re.sub(pat, '_', url)
         Repo.clone_from(
             url,
-            os.path.join(settings.CLONED_GIT_REPOS_ROOT, username),
+            os.path.join(os.path.join(settings.CLONED_GIT_REPOS_ROOT, username), repo_dir_name),
             branch='master'
         )
         status_message = RedisMessage('Your repo is cloned now.')
