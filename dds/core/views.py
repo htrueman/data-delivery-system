@@ -19,7 +19,8 @@ class ObtainGitRepoCredentials(CreateView):
             extra_repo = form.save(commit=False)
             extra_repo.user = self.request.user
             extra_repo.save()
-            return HttpResponseRedirect('some_path')
+            return HttpResponseRedirect(
+                reverse_lazy('local_spider_manager:manager', kwargs={'pk': extra_repo.id}))
 
 
 class LightSignUp(CreateView):

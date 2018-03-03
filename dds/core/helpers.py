@@ -8,15 +8,26 @@ from ws4redis.redis_store import RedisMessage
 from django.conf import settings
 
 
-async def do_git_clone(username, url):
+def get_local_path(username, url):
+    pat = re.compile('[\W]+', re.UNICODE)
+    repo_dir_name = re.sub(pat, '_', url)
+    local_path = os.path.join(
+        os.path.join(settings.CLONED_GIT_REPOS_ROOT, username), repo_dir_name)
+    return local_path
+
+
+async def do_git_clone(username, password, url):
     redis_publisher = RedisPublisher(facility='check-git-clone-status', broadcast=True)
 
     try:
-        pat = re.compile('[\W]+', re.UNICODE)
-        repo_dir_name = re.sub(pat, '_', url)
+        url_with_creds = 'https://{username}:{password}@{path}'.format(
+            path=url.split('https://')[1],
+            username=username,
+            password=password)
+
         Repo.clone_from(
-            url,
-            os.path.join(os.path.join(settings.CLONED_GIT_REPOS_ROOT, username), repo_dir_name),
+            url_with_creds,
+            get_local_path(username, url),
             branch='master'
         )
         status_message = RedisMessage('Your repo is cloned now.')

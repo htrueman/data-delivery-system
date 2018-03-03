@@ -33,8 +33,9 @@ class ObtainGitRepoCredentialsForm(InitNarrowForm):
 
     def clean(self):
         username = self.cleaned_data['username']
+        password = self.cleaned_data['password']
         url = self.cleaned_data['deep_link']
-        do_git_clone_init = do_git_clone(username, url)
+        do_git_clone_init = do_git_clone(username, password, url)
 
         def start_loop(loop):
             asyncio.set_event_loop(loop)

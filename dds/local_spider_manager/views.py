@@ -10,5 +10,6 @@ class GitRepoInfo(DetailView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['controller'] = GitRepoController.objects.get_or_create(repo=self.object)
+        context_data['controller'], is_created = \
+            GitRepoController.objects.get_or_create(repo=self.object)
         return context_data

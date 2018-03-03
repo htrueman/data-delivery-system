@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
+from .helpers import get_local_path
+
 
 class SystemUserManager(BaseUserManager):
     use_in_migrations = True
@@ -52,6 +54,7 @@ class GitRepository(models.Model):
     password = models.CharField(max_length=128)
     deep_link = models.CharField(max_length=150)
     user = models.ForeignKey('SystemUser', on_delete=models.CASCADE)
+    local_path = models.CharField(max_length=4096, null=True, blank=True)
 
     _password = None
 
@@ -60,6 +63,7 @@ class GitRepository(models.Model):
 
     def save(self, *args, **kwargs):
         self.set_password(self.password)
+        self.local_path = get_local_path(self.username, self.deep_link)
         super().save(*args, **kwargs)
         if self._password is not None:
             password_validation.password_changed(self._password, self)

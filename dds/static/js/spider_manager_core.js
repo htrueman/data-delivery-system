@@ -9,7 +9,7 @@ class SpiderManagerCore {
     must have init method.
     */
     constructor (initClasses) {
-        if (initClasses.length > 0 && initClasses.every(self._checkInitClasses)) {
+        if (initClasses.length > 0 && initClasses.every(this.checkInitClasses)) {
             this.initClasses = initClasses;
         }
     }
@@ -18,7 +18,7 @@ class SpiderManagerCore {
             classInstance.init();
         }
     }
-    static _checkInitClasses (initClass) {
+    checkInitClasses (initClass) {
         return (typeof initClass === 'function'
             && (/^\s*class\s+/).test(initClass.toString())
             && initClass.hasOwnProperty('init'));
@@ -34,7 +34,6 @@ const runSpiderBtn = document.getElementById('run-spider');
 runSpiderBtn.addEventListener('click', function(){
     import('./manage_local_spider.js')
         .then(({ LocalSpiderController }) => {
-            const localSpiderController = new LocalSpiderController();
-            localSpiderController.init(singleSpiderManagerCommands.RUN);
+            new LocalSpiderController(singleSpiderManagerCommands.RUN);
         });
 }, false);
