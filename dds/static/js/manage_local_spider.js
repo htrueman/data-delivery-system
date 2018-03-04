@@ -1,4 +1,4 @@
-import csrftoken from "./ajax_csrf_token_setup.js";
+import csrftoken from "./base_setup.js";
 
 
 export class LocalSpiderController {
@@ -6,17 +6,18 @@ export class LocalSpiderController {
         LocalSpiderController.runCurrentSpider(command);
     }
     static runCurrentSpider(command) {
+        const form = document.getElementById("ctrl-form");
+        const formData = new FormData(form);
+        formData.append('id', controllerId);
+        formData.append('execution_status', command);
+
         fetch(runSpiderPath, {
-            method: 'POST',
+            method: 'PATCH',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8',
                 'X-CSRFToken': csrftoken
             },
-            body: JSON.stringify({
-                id: controllerId,
-                execution_status: command
-            })
+            body: formData
         });
     }
 }

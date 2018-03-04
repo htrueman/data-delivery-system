@@ -2,9 +2,38 @@
 
 {% block content %}
     <div class="subheader">
-        Manage git repo, url: <a href="{{ object.deep_link }}">{{ object.deep_link }}</a>
+        Managing git repo, url: <a href="{{ object.deep_link }}">{{ object.deep_link }}</a>
     </div>
-    <input type="button" class="btn bg-success" id="run-spider" value="Run">
+    <div class="row">
+        <div class="ctrl-extra-data col-md-12">
+        <form enctype="multipart/form-data" id="ctrl-form" class="col-md-8">
+            <div class="form-group">
+                <label
+                        class="ctrl-form-input"
+                        for="setup-commands-textarea"
+                >Write down bash setup commands for current project</label>
+                <textarea
+                        name="setup_commands"
+                        id="setup-commands-textarea"
+                        class="form-control"
+                ></textarea>
+            </div>
+            <div class="form-group ctrl-form-divider">
+                OR
+            </div>
+            <div class="form-group">
+                <label
+                        class="ctrl-form-input"
+                        for="setup-commands-file"
+                >Load bash file with setup commands for current project</label>
+                <input type="file" name="setup_commands_file" class="form-control" id="setup-commands-file">
+            </div>
+            <div class="ctrl-btns">
+                <input type="button" class="btn bg-success" id="run-spider" value="Run">
+            </div>
+        </form>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}

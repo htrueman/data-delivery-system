@@ -8,3 +8,21 @@
     margin-top: 5px;
     margin-left: 92%;
 }
+
+.row {
+    margin: 20px 0 15px auto;
+}
+
+.ctrl-form-input {
+    font-size: 16pt;
+}
+
+#setup-commands-textarea {
+    height: 200px;
+}
+
+.ctrl-form-divider {
+    font-size: 20pt;
+    font-weight: bold;
+    margin-left: 50%;
+}

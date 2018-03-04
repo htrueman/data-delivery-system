@@ -6,18 +6,9 @@ from ..constants import ExecutionStatuses
 
 
 class GitRepoControllerSerializer(serializers.ModelSerializer):
+    setup_commands = serializers.CharField(required=False)
+    setup_commands_file = serializers.FileField(required=False, source='project_setup_bash_file')
+
     class Meta:
         model = GitRepoController
-        fields = ['id', 'execution_status']
-
-    # def validate_execution_status(self, value):
-    #     if value not in ExecutionStatuses.EXECUTION_STATUSES:
-    #         raise ValidationError('Unknown command.')
-    #     return value
-
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
-
-    @staticmethod
-    def run_spider():
-        pass
+        fields = ['id', 'execution_status', 'setup_commands', 'setup_commands_file']

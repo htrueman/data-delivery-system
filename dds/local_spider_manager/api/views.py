@@ -11,5 +11,5 @@ class GitRepoControllerAPIView(GenericAPIView, UpdateModelMixin):
     def get_object(self):
         return GitRepoController.objects.get(id=self.request.data['id'])
 
-    def post(self, request, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
