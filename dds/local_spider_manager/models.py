@@ -4,6 +4,8 @@ import os
 from django.db import models
 
 from core.models import GitRepository
+from django.dispatch import receiver
+
 from .constants import ExecutionStatuses
 
 
@@ -38,20 +40,25 @@ class GitRepoController(models.Model):
                 self.run()
 
     def run(self):
-        local_repo_path = self.repo.local_path
+        user_projects_path = os.path.join(self.repo.local_path, '..')
+        os.chdir(user_projects_path)
 
-        venvs_path = os.path.join(os.path.join(local_repo_path, '..'), 'virtualenvs')
-        if not os.path.exists(venvs_path):
-            os.makedirs(venvs_path)
-        bash_commands = """
-        cd {venvs_path}
-        virtualenv {venv_name} --no-site-packages
-        source {venv_name}/bin/activate
-        cd {local_path}
-        pip install -r requirements.txt
-        cd mro
-        scrapy list
-        """.format(
-            venvs_path=venvs_path,
-            local_path=self.repo.local_path,
-            venv_name='{}_venv'.format(os.path.basename(local_repo_path)))
+        process = subprocess.Popen(['/bin/bash', self.project_setup_bash_file.path])
+        stdout, stderr = process.communicate()
+
+        # venvs_path = os.path.join(os.path.join(local_repo_path, '..'), 'virtualenvs')
+        # if not os.path.exists(venvs_path):
+        #     os.makedirs(venvs_path)
+        # print(stdout, stderr)
+        # bash_commands = """
+        # cd {venvs_path}
+        # virtualenv {venv_name} --no-site-packages
+        # source {venv_name}/bin/activate
+        # cd {local_path}
+        # pip install -r requirements.txt
+        # cd mro
+        # scrapy list
+        # """.format(
+        #     venvs_path=venvs_path,
+        #     local_path=self.repo.local_path,
+        #     venv_name='{}_venv'.format(os.path.basename(local_repo_path)))
