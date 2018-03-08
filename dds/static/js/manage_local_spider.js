@@ -1,13 +1,19 @@
 import csrftoken from "./base_setup.js";
+import { singleSpiderManagerCommands } from './spider_manager_constants.js';
 
 
 export class LocalSpiderController {
     constructor(command) {
-        LocalSpiderController.runCurrentSpider(command);
+        if (Object.values(singleSpiderManagerCommands).includes(command)) {
+            LocalSpiderController.changeCurrentSpiderState(command);
+        }
     }
-    static runCurrentSpider(command) {
-        const form = document.getElementById("ctrl-form");
-        const formData = new FormData(form);
+    static changeCurrentSpiderState(command) {
+        let formData = new FormData();
+        if (command === singleSpiderManagerCommands.RUN) {
+            const form = document.getElementById("ctrl-form");
+            formData = new FormData(form);
+        }
         formData.append('id', controllerId);
         formData.append('execution_status', command);
 

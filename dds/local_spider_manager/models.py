@@ -1,3 +1,4 @@
+import signal
 import subprocess
 import os
 
@@ -23,6 +24,9 @@ class GitRepoController(models.Model):
     project_setup_bash_file = models.FileField(
         upload_to=get_project_setup_bash_file_path,
         null=True)
+    current_running_process_pid = models.IntegerField(
+        null=True,
+        blank=True)
 
     def __str__(self):
         return '{}, {}'.format(self.execution_status, self.repo.deep_link)
@@ -30,13 +34,12 @@ class GitRepoController(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__old_execution_status = self.execution_status
-        self._process = ''
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.execution_status != self.__old_execution_status:
             if self.execution_status == ExecutionStatuses.RUN:
-                self._process = self.run()
+                self.run()
             elif self.execution_status == ExecutionStatuses.STOP:
                 self.stop()
 
@@ -47,14 +50,16 @@ class GitRepoController(models.Model):
         process = subprocess.Popen(['/bin/bash', self.project_setup_bash_file.path],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
+        self.current_running_process_pid = process.pid
+        super().save()
+
         stdout, stderr = process.communicate()
 
         # TODO: use logger here
         with open('log.txt', 'a+') as f:
             f.write(stdout.decode('utf-8'))
 
-        return process
-
     def stop(self):
-        if isinstance(self._process, subprocess.Popen):
-            self._process.kill()
+        os.kill(self.current_running_process_pid, signal.SIGKILL)
+        self.current_running_process_pid = None
+        super().save()

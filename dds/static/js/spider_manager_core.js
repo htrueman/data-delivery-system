@@ -30,10 +30,19 @@ const spiderManagerCore = new SpiderManagerCore(initialClassInstancesArray);
 spiderManagerCore.init();
 
 
-const runSpiderBtn = document.getElementById('run-spider');
-runSpiderBtn.addEventListener('click', function(){
-    import('./manage_local_spider.js')
-        .then(({ LocalSpiderController }) => {
-            new LocalSpiderController(singleSpiderManagerCommands.RUN);
-        });
-}, false);
+const changeSpiderStateBtns = document.getElementsByClassName('ctrl-btn');
+for (let btn of changeSpiderStateBtns) {
+    btn.addEventListener('click', function () {
+        import('./manage_local_spider.js')
+            .then(({LocalSpiderController}) => {
+                let command = '';
+                if (btn.id === 'run-spider') {
+                    command = singleSpiderManagerCommands.RUN;
+                }
+                else if (btn.id === 'stop-spider') {
+                    command = singleSpiderManagerCommands.STOP;
+                }
+                new LocalSpiderController(command);
+            });
+    }, false);
+}

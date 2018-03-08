@@ -1,3 +1,4 @@
 export const singleSpiderManagerCommands = {
-    'RUN': 'R'
+    'RUN': 'R',
+    'STOP': 'S',
 };
