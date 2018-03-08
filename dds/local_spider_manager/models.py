@@ -1,11 +1,9 @@
 import subprocess
-
 import os
+
 from django.db import models
 
 from core.models import GitRepository
-from django.dispatch import receiver
-
 from .constants import ExecutionStatuses
 
 
@@ -32,33 +30,31 @@ class GitRepoController(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__old_execution_status = self.execution_status
+        self._process = ''
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.execution_status != self.__old_execution_status:
             if self.execution_status == ExecutionStatuses.RUN:
-                self.run()
+                self._process = self.run()
+            elif self.execution_status == ExecutionStatuses.STOP:
+                self.stop()
 
     def run(self):
         user_projects_path = os.path.join(self.repo.local_path, '..')
         os.chdir(user_projects_path)
 
-        process = subprocess.Popen(['/bin/bash', self.project_setup_bash_file.path])
+        process = subprocess.Popen(['/bin/bash', self.project_setup_bash_file.path],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
 
-        # venvs_path = os.path.join(os.path.join(local_repo_path, '..'), 'virtualenvs')
-        # if not os.path.exists(venvs_path):
-        #     os.makedirs(venvs_path)
-        # print(stdout, stderr)
-        # bash_commands = """
-        # cd {venvs_path}
-        # virtualenv {venv_name} --no-site-packages
-        # source {venv_name}/bin/activate
-        # cd {local_path}
-        # pip install -r requirements.txt
-        # cd mro
-        # scrapy list
-        # """.format(
-        #     venvs_path=venvs_path,
-        #     local_path=self.repo.local_path,
-        #     venv_name='{}_venv'.format(os.path.basename(local_repo_path)))
+        # TODO: use logger here
+        with open('log.txt', 'a+') as f:
+            f.write(stdout.decode('utf-8'))
+
+        return process
+
+    def stop(self):
+        if isinstance(self._process, subprocess.Popen):
+            self._process.kill()
