@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="subheader">
+        Cloned repos list:
+    </div>
+    <div class="row">
+            <ul class="list-group col-md-12">
+                {% for object in object_list %}
+                    {% with object.controller.execution_status as status %}
+                    <li class="list-group-item
+{% if status == 'R' %}list-group-item-success {% elif status == 'S' %}list-group-item-danger{% endif %}">
+                        <a href="{% url 'local_spider_manager:manager' pk=object.id %}">
+                            Link: {{ object.deep_link }}, ID: {{ object.id }}
+                        </a>
+                    </li>
+                    {% endwith %}
+                {% endfor %}
+            </ul>
+            {% if is_paginated %}
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}"><<</a>
+                        {% endif %}
+                        <span class="page-current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">>></a>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

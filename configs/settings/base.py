@@ -144,3 +144,7 @@ SESSION_REDIS_PREFIX = 'session'
 # Crispy forms
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+LOGIN_URL = 'core:get_git_repo'
+LOGIN_REDIRECT_URL = 'local_spider_manager:list'

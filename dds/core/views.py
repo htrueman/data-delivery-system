@@ -42,3 +42,10 @@ class LightSignUp(CreateView):
         del self.request.session['repo_data']
 
         return super().form_valid(form)
+
+#
+# class SignIn(FormView):
+#     form_class = SignInForm
+#     template_name = 'core/login.html'
+#
+#     def form_valid(self, form):

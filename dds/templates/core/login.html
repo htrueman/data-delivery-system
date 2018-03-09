@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/core_app.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="narrow-header">Sign In</div>
+    {% crispy form %}
+{% endblock %}

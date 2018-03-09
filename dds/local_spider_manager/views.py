@@ -1,4 +1,4 @@
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 
 from core.models import GitRepository
 from .models import GitRepoController
@@ -13,3 +13,11 @@ class GitRepoInfo(DetailView):
         context_data['controller'], is_created = \
             GitRepoController.objects.get_or_create(repo=self.object)
         return context_data
+
+
+class GitReposList(ListView):
+    template_name = 'local_spider_manager/repos_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return GitRepository.objects.filter(user=self.request.user)

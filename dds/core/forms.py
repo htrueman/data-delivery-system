@@ -2,6 +2,7 @@ import asyncio
 from threading import Thread
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, PasswordInput
 from crispy_forms.helper import FormHelper
@@ -57,3 +58,13 @@ class LightSignUpForm(InitNarrowForm):
         user_with_same_email = User.objects.filter(email=self.cleaned_data['email'])
         if user_with_same_email:
             raise ValidationError('User is already registered')
+
+
+class LoginForm(AuthenticationForm):
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'narrow-form'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
