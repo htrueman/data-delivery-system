@@ -25,3 +25,9 @@
     font-weight: bold;
     margin-left: 50%;
 }
+
+.btn-panel {
+    background-color: grey;
+    padding: 5px;
+    border-radius: 5px;
+}

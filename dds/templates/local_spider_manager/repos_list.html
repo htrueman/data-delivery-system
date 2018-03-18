@@ -2,7 +2,12 @@
 
 {% block content %}
     <div class="subheader">
-        Cloned repos list:
+        Cloned repos list
+    </div>
+    <div class="row">
+        <div class="btn-panel col-md-12">
+            <a href="{% url 'core:get_git_repo' %}" class="btn btn-primary">Add new repo</a>
+        </div>
     </div>
     <div class="row">
             <ul class="list-group col-md-12">

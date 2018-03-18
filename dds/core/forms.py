@@ -52,7 +52,10 @@ class ObtainGitRepoCredentialsForm(InitNarrowForm):
 class LightSignUpForm(InitNarrowForm):
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'password']
+        widgets = {
+            'password': PasswordInput()
+        }
 
     def validate_email(self):
         user_with_same_email = User.objects.filter(email=self.cleaned_data['email'])

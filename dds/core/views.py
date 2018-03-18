@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.contrib.auth import authenticate, login
 
 from .forms import ObtainGitRepoCredentialsForm, LightSignUpForm
 from .models import GitRepository
@@ -42,10 +43,3 @@ class LightSignUp(CreateView):
         del self.request.session['repo_data']
 
         return super().form_valid(form)
-
-#
-# class SignIn(FormView):
-#     form_class = SignInForm
-#     template_name = 'core/login.html'
-#
-#     def form_valid(self, form):
