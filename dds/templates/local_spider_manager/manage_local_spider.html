@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="back-btn">
+        <a href="{% url 'local_spider_manager:list' %}"><< Back to cloned repos</a>
+    </div>
     <div class="subheader">
         Managing git repo, url: <a href="{{ object.deep_link }}">{{ object.deep_link }}</a>
     </div>

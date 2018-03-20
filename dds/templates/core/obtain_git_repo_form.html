@@ -7,6 +7,9 @@
 {% endblock %}
 
 {% block content %}
+    <div class="back-btn">
+        <a href="{% url 'local_spider_manager:list' %}"><< Back to cloned repos</a>
+    </div>
     <div class="narrow-header">Obtain new git repository</div>
     {% crispy form %}
 {% endblock %}

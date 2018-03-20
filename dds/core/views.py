@@ -1,6 +1,7 @@
 import json
 
-from django.http import HttpResponseRedirect
+from django.contrib.auth import login
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -33,27 +34,32 @@ class LightSignUp(CreateView):
     template_name = 'core/light_sign_up_form.html'
     is_ajax_submit_template_name = 'core/light_sign_up_form_body.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.is_ajax_submit = self.request.session.get('is_ajax_submit')
+        if self.is_ajax_submit:
+            self.repo_data = self.request.session['repo_data']
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponse("Forbidden", status=403)
+
     def get_success_url(self):
         return reverse_lazy('local_spider_manager:manager', kwargs={'pk': self.object.id})
 
     def get(self, request, *args, **kwargs):
-        is_ajax_submit = self.request.session.get('is_ajax_submit')
-        if is_ajax_submit:
-            del self.request.session['is_ajax_submit']
+        if self.is_ajax_submit:
             return render(
                 self.request, self.is_ajax_submit_template_name, {'form': self.form_class})
-
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
-        repo_data = self.request.session['repo_data']
-
         new_user = form.save(commit=False)
-        new_user.username = repo_data['username']
-        new_user.set_password(repo_data['password'])
+        new_user.username = self.repo_data['username']
+        new_user.set_password(self.repo_data['password'])
         new_user.save()
 
-        GitRepository.objects.create(**repo_data, user=new_user)
+        GitRepository.objects.create(**self.repo_data, user=new_user)
         del self.request.session['repo_data']
+        del self.request.session['is_ajax_submit']
+
+        login(self.request, new_user)
 
         return super().form_valid(form)
