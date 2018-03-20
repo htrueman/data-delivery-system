@@ -14,23 +14,21 @@ from .helpers import do_git_clone
 User = get_user_model()
 
 
-class InitNarrowForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = 'narrow-form'
-        self.helper.form_method = 'post'
-
-        self.helper.add_input(Submit('submit', 'Submit'))
-
-
-class ObtainGitRepoCredentialsForm(InitNarrowForm):
+class ObtainGitRepoCredentialsForm(ModelForm):
     class Meta:
         model = GitRepository
         fields = ['username', 'password', 'deep_link']
         widgets = {
             'password': PasswordInput()
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'new-repo-form'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
         username = self.cleaned_data['username']
@@ -49,13 +47,21 @@ class ObtainGitRepoCredentialsForm(InitNarrowForm):
         return super().clean()
 
 
-class LightSignUpForm(InitNarrowForm):
+class LightSignUpForm(ModelForm):
     class Meta:
         model = User
         fields = ['email', 'password']
         widgets = {
             'password': PasswordInput()
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'light-signup-form'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
 
     def validate_email(self):
         user_with_same_email = User.objects.filter(email=self.cleaned_data['email'])
@@ -67,7 +73,7 @@ class LoginForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(request, *args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'narrow-form'
+        self.helper.form_id = 'light-signup-form'
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Submit'))

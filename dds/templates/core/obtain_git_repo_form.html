@@ -10,3 +10,10 @@
     <div class="narrow-header">Obtain new git repository</div>
     {% crispy form %}
 {% endblock %}
+
+{% block extra_js %}
+    <script>
+        const getNewRepoPath = '{% url "core:get_git_repo" %}';
+        const signupPath = '{% url "core:light_signup" %}';
+    </script>
+{% endblock %}

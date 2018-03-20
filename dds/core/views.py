@@ -1,7 +1,9 @@
+import json
+
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from django.contrib.auth import authenticate, login
 
 from .forms import ObtainGitRepoCredentialsForm, LightSignUpForm
 from .models import GitRepository
@@ -15,6 +17,8 @@ class ObtainGitRepoCredentials(CreateView):
     def form_valid(self, form):
         if not self.request.user.is_authenticated:
             self.request.session['repo_data'] = form.cleaned_data
+            self.request.session['is_ajax_submit'] = \
+                json.loads(self.request.POST.get('is_ajax_submit'))
             return HttpResponseRedirect(self.success_url)
         else:
             extra_repo = form.save(commit=False)
@@ -27,9 +31,19 @@ class ObtainGitRepoCredentials(CreateView):
 class LightSignUp(CreateView):
     form_class = LightSignUpForm
     template_name = 'core/light_sign_up_form.html'
+    is_ajax_submit_template_name = 'core/light_sign_up_form_body.html'
 
     def get_success_url(self):
         return reverse_lazy('local_spider_manager:manager', kwargs={'pk': self.object.id})
+
+    def get(self, request, *args, **kwargs):
+        is_ajax_submit = self.request.session.get('is_ajax_submit')
+        if is_ajax_submit:
+            del self.request.session['is_ajax_submit']
+            return render(
+                self.request, self.is_ajax_submit_template_name, {'form': self.form_class})
+
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         repo_data = self.request.session['repo_data']

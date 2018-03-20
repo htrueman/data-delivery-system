@@ -1,9 +1,9 @@
-#narrow-form, .narrow-header {
+#light-signup-form, #new-repo-form, .narrow-header {
     width: 35%;
     margin: auto;
 }
 
-#narrow-form {
+#light-signup-form, #new-repo-form {
     margin-top: 20px;
 }
 

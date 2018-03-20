@@ -1,4 +1,5 @@
 import { singleSpiderManagerCommands } from './spider_manager_constants.js';
+import csrftoken from "./base_setup.js";
 
 
 class SpiderManagerCore {
@@ -28,6 +29,30 @@ class SpiderManagerCore {
 let initialClassInstancesArray = [];
 const spiderManagerCore = new SpiderManagerCore(initialClassInstancesArray);
 spiderManagerCore.init();
+
+
+const newRepoForm = document.getElementById('new-repo-form');
+newRepoForm.onsubmit = function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    formData.append('is_ajax_submit', true);
+    fetch(getNewRepoPath, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        body: formData
+    }).then((response) => {
+        window.history.pushState({}, '', `${signupPath}`);
+        return response.text();
+    }).then((data) => {
+        document.getElementsByClassName('body')[0].innerHTML = data;
+    }).catch((error) => {
+        console.log(error);
+    });
+};
 
 
 const changeSpiderStateBtns = document.getElementsByClassName('ctrl-btn');
