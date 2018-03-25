@@ -3,7 +3,6 @@ const ws = new WebSocket(
 
 ws.onmessage = (message) => {
     console.log("Received: " + message.data);
-    ws.close();
 };
 
 ws.onerror = (error) => {
