@@ -23,9 +23,13 @@ class ObtainGitRepoCredentialsForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'new-repo-form'
+        if user.is_authenticated:
+            self.helper.form_id = 'add-repo-form'
+        else:
+            self.helper.form_id = 'new-repo-form'
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Submit'))

@@ -32,5 +32,5 @@ async def do_git_clone(username, password, url):
         )
         status_message = RedisMessage('Your repo is cloned now.')
     except Exception as e:
-        status_message = RedisMessage('Your repo is NOT cloned, error: {}'.format(str(e)))
+        status_message = RedisMessage('Your repo is NOT cloned, error: {}'.format(e))
     redis_publisher.publish_message(status_message)

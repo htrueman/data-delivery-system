@@ -26,6 +26,14 @@
     margin-left: 50%;
 }
 
+.subheader {
+    font-size: 22pt;
+    background-color: lightgray;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
 .btn-panel {
     background-color: grey;
     padding: 5px;

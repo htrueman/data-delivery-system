@@ -15,6 +15,11 @@ class ObtainGitRepoCredentials(CreateView):
     template_name = 'core/obtain_git_repo_form.html'
     success_url = reverse_lazy('core:light_signup')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         if not self.request.user.is_authenticated:
             self.request.session['repo_data'] = form.cleaned_data

@@ -21,3 +21,8 @@ class GitReposList(ListView):
 
     def get_queryset(self):
         return GitRepository.objects.filter(user=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        if 'remove-all' in request.GET.keys():
+            GitRepository.objects.filter(user=request.user).delete()
+        return super().get(request, *args, **kwargs)

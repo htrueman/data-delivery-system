@@ -1,4 +1,4 @@
-#light-signup-form, #new-repo-form, .narrow-header {
+#light-signup-form, #new-repo-form, #add-repo-form, .narrow-header {
     width: 35%;
     margin: auto;
 }

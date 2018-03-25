@@ -4,11 +4,22 @@
     <div class="subheader">
         Cloned repos list
     </div>
-    <div class="row">
-        <div class="btn-panel col-md-12">
+    <div class="row btn-panel">
+        <div class="col-md-8">
             <a href="{% url 'core:get_git_repo' %}" class="btn btn-primary">Add new repo</a>
         </div>
+        {% if object_list %}
+        <div class="col-md-4">
+            <a
+              href="{% url 'local_spider_manager:list' %}?remove-all"
+              class="btn btn-danger remove-all-btn"
+            >
+                Remove ALL repos
+            </a>
+        </div>
+        {% endif %}
     </div>
+    {% if object_list %}
     <div class="row">
             <ul class="list-group col-md-12">
                 {% for object in object_list %}
@@ -38,6 +49,11 @@
                 </div>
             {% endif %}
     </div>
+    {% else %}
+        <div class="row">
+            <h1>Your cloned repos list is empty.</h1>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block extra_js %}
