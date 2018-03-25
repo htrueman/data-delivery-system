@@ -134,7 +134,7 @@ CLONED_GIT_REPOS_ROOT = root('cloned_repos')
 # Websockets/redis
 
 WEBSOCKET_URL = '/ws/'
-WS4REDIS_EXPIRE = 0
+WS4REDIS_EXPIRE = 7200
 WS4REDIS_PREFIX = 'ws'
 
 SESSION_ENGINE = 'redis_sessions.session'

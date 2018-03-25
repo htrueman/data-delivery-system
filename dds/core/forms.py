@@ -1,6 +1,3 @@
-import asyncio
-from threading import Thread
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
@@ -9,7 +6,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from .models import GitRepository
-from .helpers import do_git_clone
 
 User = get_user_model()
 
@@ -33,22 +29,6 @@ class ObtainGitRepoCredentialsForm(ModelForm):
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Submit'))
-
-    def clean(self):
-        username = self.cleaned_data['username']
-        password = self.cleaned_data['password']
-        url = self.cleaned_data['deep_link']
-        do_git_clone_init = do_git_clone(username, password, url)
-
-        def start_loop(loop):
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(do_git_clone_init)
-            loop.close()
-
-        new_loop = asyncio.new_event_loop()
-        thread = Thread(target=start_loop, args=(new_loop,))
-        thread.start()
-        return super().clean()
 
 
 class LightSignUpForm(ModelForm):

@@ -23,12 +23,32 @@
     <div class="row">
             <ul class="list-group col-md-12">
                 {% for object in object_list %}
-                    {% with object.controller.execution_status as status %}
+                    {% with status=object.controller.execution_status cloning_status=object.cloning_status %}
                     <li class="list-group-item
-{% if status == 'R' %}list-group-item-success {% elif status == 'S' %}list-group-item-danger{% endif %}">
-                        <a href="{% url 'local_spider_manager:manager' pk=object.id %}">
-                            Link: {{ object.deep_link }}, ID: {{ object.id }}
-                        </a>
+                    {% if status == 'R' %} list-group-item-success
+                    {% elif status == 'S' %} list-group-item-danger
+                    {% endif %}
+                    ">
+                        <div class="row">
+                            <div class="col-md-10 repo-link-{{ object.id }}">
+                                {% if cloning_status == 2 %}
+                                    Link: {{ object.deep_link }}, ID: {{ object.id }}
+                                {% else %}
+                                    <a href="{% url 'local_spider_manager:manager' pk=object.id %}">
+                                        Link: {{ object.deep_link }}, ID: {{ object.id }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-2 repo-cloning-status-{{ object.id }}">
+                                {% if cloning_status == 0 %}
+                                    <i class="fa fa-spinner fa-spin" style="font-size:16px"></i> Cloning
+                                {% elif cloning_status == 1 %}
+                                    <i class="fa fa-check" style="font-size:16px;color:green;"></i> Cloned
+                                {% else %}
+                                    <i class="fa fa-close" style="font-size:16px;color:red;"></i> Cloning failed
+                                {% endif %}
+                            </div>
+                        </div>
                     </li>
                     {% endwith %}
                 {% endfor %}
@@ -54,4 +74,10 @@
             <h1>Your cloned repos list is empty.</h1>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        const repoManagerLinkBase = '{% url 'local_spider_manager:manager' pk=0 %}';
+    </script>
 {% endblock %}

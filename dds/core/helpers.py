@@ -1,6 +1,8 @@
+import json
 import os
 import re
 
+from core.constants import CloningStatuses
 from git import Repo
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
@@ -16,9 +18,11 @@ def get_local_path(username, url):
     return local_path
 
 
-async def do_git_clone(username, password, url):
+async def do_git_clone(username, password, url, repo):
     redis_publisher = RedisPublisher(facility='check-git-clone-status', broadcast=True)
-
+    status_message = {
+        'id': repo.id
+    }
     try:
         url_with_creds = 'https://{username}:{password}@{path}'.format(
             path=url.split('https://')[1],
@@ -30,7 +34,11 @@ async def do_git_clone(username, password, url):
             get_local_path(username, url),
             branch='master'
         )
-        status_message = RedisMessage('Your repo is cloned now.')
+        repo.cloning_status = CloningStatuses.SUCCEED
+        status_message['type'] = 'success'
     except Exception as e:
-        status_message = RedisMessage('Your repo is NOT cloned, error: {}'.format(e))
-    redis_publisher.publish_message(status_message)
+        repo.cloning_status = CloningStatuses.FAILED
+        status_message['type'] = 'fail'
+        status_message['error_text'] = str(e)
+    repo.save()
+    redis_publisher.publish_message(RedisMessage(json.dumps(status_message)))

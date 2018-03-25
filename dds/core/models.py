@@ -1,10 +1,14 @@
+import asyncio
+from threading import Thread
+
 from django.contrib.auth import password_validation
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
-from .helpers import get_local_path
+from .constants import CloningStatuses
+from .helpers import get_local_path, do_git_clone
 
 
 class SystemUserManager(BaseUserManager):
@@ -55,6 +59,9 @@ class GitRepository(models.Model):
     deep_link = models.CharField(max_length=150)
     user = models.ForeignKey('SystemUser', on_delete=models.CASCADE)
     local_path = models.CharField(max_length=4096, null=True, blank=True)
+    cloning_status = models.IntegerField(
+        choices=CloningStatuses.CLONING_STATUSES,
+        default=CloningStatuses.PROCESSING)
 
     _password = None
 
@@ -64,7 +71,12 @@ class GitRepository(models.Model):
     def save(self, *args, **kwargs):
         self.set_password(self.password)
         self.local_path = get_local_path(self.username, self.deep_link)
+
         super().save(*args, **kwargs)
+
+        if not self.id:
+            self.clone_repo()
+
         if self._password is not None:
             password_validation.password_changed(self._password, self)
             self._password = None
@@ -72,6 +84,22 @@ class GitRepository(models.Model):
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
         self._password = raw_password
+
+    def clone_repo(self):
+        do_git_clone_init = do_git_clone(
+            self.username,
+            self.password,
+            self.deep_link,
+            self)
+
+        def start_loop(loop):
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(do_git_clone_init)
+            loop.close()
+
+        new_loop = asyncio.new_event_loop()
+        thread = Thread(target=start_loop, args=(new_loop,))
+        thread.start()
 
     def __str__(self):
         return '{}'.format(self.deep_link)

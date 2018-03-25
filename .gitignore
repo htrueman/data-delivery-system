@@ -16,3 +16,5 @@ staticfiles
 media
 bower_components
 env_vars.json
+cloned_repos/*
+!cloned_repos/__init__.py
