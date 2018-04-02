@@ -19,16 +19,22 @@ class ObtainGitRepoCredentialsForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        if user.is_authenticated:
+        if self.user.is_authenticated:
             self.helper.form_id = 'add-repo-form'
         else:
             self.helper.form_id = 'new-repo-form'
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Submit'))
+
+    def clean_deep_link(self):
+        link = self.cleaned_data['deep_link']
+        if GitRepository.objects.filter(deep_link=link, user=self.user):
+            raise ValidationError('This repository is already cloned.')
+        return link
 
 
 class LightSignUpForm(ModelForm):

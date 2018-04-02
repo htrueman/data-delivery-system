@@ -1,11 +1,13 @@
 import asyncio
 from threading import Thread
 
+import os
 from django.contrib.auth import password_validation
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.dispatch import receiver
 
 from .constants import CloningStatuses
 from .helpers import get_local_path, do_git_clone
@@ -62,20 +64,24 @@ class GitRepository(models.Model):
     cloning_status = models.IntegerField(
         choices=CloningStatuses.CLONING_STATUSES,
         default=CloningStatuses.PROCESSING)
+    log_chamber = models.CharField(max_length=1024, null=True)
 
     _password = None
 
     class Meta:
         verbose_name_plural = 'Git repositories'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._password = None
+
     def save(self, *args, **kwargs):
-        self.set_password(self.password)
         self.local_path = get_local_path(self.username, self.deep_link)
 
         super().save(*args, **kwargs)
 
-        if not self.id:
-            self.clone_repo()
+        if not os.path.isdir(self.local_path) and self._password is not None:
+            self.clone_repo(self._password)
 
         if self._password is not None:
             password_validation.password_changed(self._password, self)
@@ -85,12 +91,8 @@ class GitRepository(models.Model):
         self.password = make_password(raw_password)
         self._password = raw_password
 
-    def clone_repo(self):
-        do_git_clone_init = do_git_clone(
-            self.username,
-            self.password,
-            self.deep_link,
-            self)
+    def clone_repo(self, raw_password):
+        do_git_clone_init = do_git_clone(raw_password, self)
 
         def start_loop(loop):
             asyncio.set_event_loop(loop)

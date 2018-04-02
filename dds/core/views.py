@@ -29,6 +29,7 @@ class ObtainGitRepoCredentials(CreateView):
         else:
             extra_repo = form.save(commit=False)
             extra_repo.user = self.request.user
+            extra_repo.set_password(extra_repo.password)
             extra_repo.save()
             return HttpResponseRedirect(
                 reverse_lazy('local_spider_manager:manager', kwargs={'pk': extra_repo.id}))

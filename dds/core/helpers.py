@@ -18,26 +18,27 @@ def get_local_path(username, url):
     return local_path
 
 
-async def do_git_clone(username, password, url, repo):
+async def do_git_clone(password, repo):
     redis_publisher = RedisPublisher(facility='check-git-clone-status', broadcast=True)
     status_message = {
         'id': repo.id
     }
     try:
         url_with_creds = 'https://{username}:{password}@{path}'.format(
-            path=url.split('https://')[1],
-            username=username,
+            path=repo.deep_link.split('https://')[1],
+            username=repo.username,
             password=password)
 
         Repo.clone_from(
             url_with_creds,
-            get_local_path(username, url),
+            get_local_path(repo.username, repo.deep_link),
             branch='master'
         )
         repo.cloning_status = CloningStatuses.SUCCEED
         status_message['type'] = 'success'
     except Exception as e:
         repo.cloning_status = CloningStatuses.FAILED
+        repo.log_chamber = str(e)
         status_message['type'] = 'fail'
         status_message['error_text'] = str(e)
     repo.save()
