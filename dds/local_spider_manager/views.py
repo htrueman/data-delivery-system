@@ -10,8 +10,20 @@ class GitRepoInfo(DetailView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['controller'], is_created = \
+        controller, is_created = \
             GitRepoController.objects.get_or_create(repo=self.object)
+
+        if controller.project_setup_bash_file:
+            context_data['controller_bash_content'] = ''
+            with open(controller.project_setup_bash_file.path, 'r') as f:
+                for index, line in enumerate(f):
+                    if index <= 512:
+                        context_data['controller_bash_content'] += line
+                    else:
+                        context_data['controller_bash_content'] += 'Last elements are truncated...'
+            context_data['controller_log_content'] = ''
+
+        context_data['controller'] = controller
         return context_data
 
 

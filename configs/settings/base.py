@@ -125,6 +125,10 @@ STATIC_ROOT = os.path.join(APPS_ROOT, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(APPS_ROOT, 'static')]
 
 
+MEDIA_ROOT = os.path.join(APPS_ROOT, 'media')
+MEDIA_URL = '/media/'
+
+
 AUTH_USER_MODEL = 'core.SystemUser'
 
 

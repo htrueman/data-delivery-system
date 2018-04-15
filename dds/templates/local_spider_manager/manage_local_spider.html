@@ -8,6 +8,7 @@
         Managing git repo, url: <a href="{{ object.deep_link }}">{{ object.deep_link }}</a>
     </div>
     <div class="row">
+        {% if not controller.project_setup_bash_file %}
         <div class="ctrl-extra-data col-md-12">
         <form enctype="multipart/form-data" id="ctrl-form" class="col-md-8">
             <div class="form-group">
@@ -37,6 +38,13 @@
             </div>
         </form>
         </div>
+        {% else %}
+            <div class="logs col-md-6">
+            </div>
+            <div class="sh-content col-md-6">
+                {{ controller_bash_content|linebreaks }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 

@@ -2,14 +2,17 @@ import signal
 import subprocess
 import os
 
+from django.core.files import File
 from django.db import models
 
 from core.models import GitRepository
 from .constants import ExecutionStatuses
 
 
-def get_project_setup_bash_file_path(controller_instance, filename):
-    return os.path.join(os.path.join(controller_instance.repo.local_path, '..'), filename)
+def get_project_file_path(controller_instance, filename):
+    repo_path = controller_instance.repo.local_path
+    tools_path = 'tools_{}'.format(os.path.basename(repo_path))
+    return os.path.join(tools_path, filename)
 
 
 class GitRepoController(models.Model):
@@ -22,8 +25,10 @@ class GitRepoController(models.Model):
         default=ExecutionStatuses.INITIAL,
         max_length=1)
     project_setup_bash_file = models.FileField(
-        upload_to=get_project_setup_bash_file_path,
+        upload_to=get_project_file_path,
         null=True)
+    project_exec_log_file = models.FileField(
+        upload_to=get_project_file_path)
     current_running_process_pid = models.IntegerField(
         null=True,
         blank=True)
@@ -36,7 +41,13 @@ class GitRepoController(models.Model):
         self.__old_execution_status = self.execution_status
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        if not self.project_exec_log_file:
+            log_file = open('exec.log', 'w+')
+            django_log_file = File(log_file)
+            self.project_exec_log_file.save('exec.log', django_log_file)
+            log_file.close()
+        else:
+            super().save(*args, **kwargs)
         if self.execution_status != self.__old_execution_status:
             if self.execution_status == ExecutionStatuses.RUN:
                 self.run()
@@ -55,8 +66,7 @@ class GitRepoController(models.Model):
 
         stdout, stderr = process.communicate()
 
-        # TODO: use logger here
-        with open('log.txt', 'a+') as f:
+        with open(self.project_exec_log_file.path, 'a+') as f:
             f.write(stdout.decode('utf-8'))
 
     def stop(self):

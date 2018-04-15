@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gitrepocontroller',
             name='project_setup_bash_file',
-            field=models.FileField(null=True, upload_to=local_spider_manager.models.get_project_setup_bash_file_path),
+            field=models.FileField(null=True, upload_to=local_spider_manager.models.get_project_file_path),
         ),
     ]
