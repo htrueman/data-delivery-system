@@ -58,6 +58,14 @@ class GitRepoController(models.Model):
 
     def run(self):
         os.chdir(self.repo.local_path)
+        with open(self.project_setup_bash_file.path, 'r+') as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write('source {venv_path}/bin/activate\n{body}'.format(
+                body=content,
+                venv_path=os.path.join(os.path.dirname(self.project_setup_bash_file.path), 'venv')
+            ))
+
         process = subprocess.Popen(['/bin/bash', self.project_setup_bash_file.path],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -67,7 +75,13 @@ class GitRepoController(models.Model):
         stdout, stderr = process.communicate()
 
         with open(self.project_exec_log_file.path, 'a+') as f:
-            f.write(stdout.decode('utf-8'))
+            if stdout:
+                f.write(stdout.decode('utf-8'))
+            if stderr:
+                f.write(stderr.decode('utf-8'))
+        self.current_running_process_pid = None
+        self.execution_status = ExecutionStatuses.STOP
+        super().save()
 
     def stop(self):
         with suppress(ProcessLookupError):

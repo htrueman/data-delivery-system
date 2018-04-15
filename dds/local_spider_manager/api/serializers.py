@@ -29,13 +29,23 @@ class GitRepoControllerSerializer(serializers.ModelSerializer):
                 script_file_name, ContentFile(validated_data['setup_commands']))
             instance.save()
 
-        if instance.project_setup_bash_file:
+        venv_name = 'venv'
+        if instance.project_setup_bash_file \
+                and not os.path.exists(os.path.join(
+                    os.path.dirname(instance.project_setup_bash_file.path), venv_name)):
             os.chdir(os.path.dirname(instance.project_setup_bash_file.path))
-            subprocess.Popen(
+            process = subprocess.Popen(
                 ['virtualenv',
                  '--python',
                  validated_data['python_version'],
-                 'venv',
-                 '--no-site-packages'])
+                 venv_name,
+                 '--no-site-packages'],
+                stdout=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            with open(instance.project_exec_log_file.path, 'a+') as f:
+                if stdout:
+                    f.write(stdout.decode('utf-8'))
+                if stderr:
+                    f.write(stderr.decode('utf-8'))
 
         return super().update(instance, validated_data)

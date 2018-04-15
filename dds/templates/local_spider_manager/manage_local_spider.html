@@ -9,18 +9,26 @@
         Managing git repo, url: <a href="{{ object.deep_link }}">{{ object.deep_link }}</a>
     </div>
     <div class="row">
-        {% if not controller.project_setup_bash_file %}
         <div class="ctrl-extra-data col-md-12">
             {% crispy form %}
         </div>
-        {% else %}
+    </div>
+    <div class="subheader">
+        Execution data
+    </div>
+    {% if controller.project_setup_bash_file %}
+        <div class="row">
             <div class="logs col-md-6">
+                {# TODO: push extra logs by sockets if log content > 512 lines #}
+                <h2>Execution log</h2>
+                {{ controller_log_content|linebreaks }}
             </div>
             <div class="sh-content col-md-6">
+                <h2>Bash script content</h2>
                 {{ controller_bash_content|linebreaks }}
             </div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block extra_js %}
