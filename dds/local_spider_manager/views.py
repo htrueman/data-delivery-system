@@ -1,12 +1,14 @@
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, FormView
 
 from core.models import GitRepository
 from .models import GitRepoController
+from .forms import GitRepoManagerForm
 
 
-class GitRepoInfo(DetailView):
+class GitRepoInfo(DetailView, FormView):
     model = GitRepository
     template_name = 'local_spider_manager/manage_local_spider.html'
+    form_class = GitRepoManagerForm
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -14,14 +16,20 @@ class GitRepoInfo(DetailView):
             GitRepoController.objects.get_or_create(repo=self.object)
 
         if controller.project_setup_bash_file:
-            context_data['controller_bash_content'] = ''
-            with open(controller.project_setup_bash_file.path, 'r') as f:
-                for index, line in enumerate(f):
-                    if index <= 512:
-                        context_data['controller_bash_content'] += line
-                    else:
-                        context_data['controller_bash_content'] += 'Last elements are truncated...'
-            context_data['controller_log_content'] = ''
+            def get_file_content(file_path):
+                file_content = ''
+                with open(file_path, 'r') as f:
+                    for index, line in enumerate(f):
+                        if index <= 512:
+                            file_content += line
+                        else:
+                            file_content += 'Last elements are truncated...'
+                return file_content
+
+            context_data['controller_bash_content'] = \
+                get_file_content(controller.project_setup_bash_file.path)
+            context_data['controller_log_content'] = \
+                get_file_content(controller.project_exec_log_file.path)
 
         context_data['controller'] = controller
         return context_data
@@ -32,7 +40,7 @@ class GitReposList(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return GitRepository.objects.filter(user=self.request.user)
+        return GitRepository.objects.filter(user=self.request.user).order_by('-id')
 
     def get(self, request, *args, **kwargs):
         if 'remove-all' in request.GET.keys():

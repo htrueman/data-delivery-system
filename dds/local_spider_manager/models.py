@@ -1,6 +1,7 @@
 import signal
 import subprocess
 import os
+from contextlib import suppress
 
 from django.core.files import File
 from django.db import models
@@ -46,6 +47,7 @@ class GitRepoController(models.Model):
             django_log_file = File(log_file)
             self.project_exec_log_file.save('exec.log', django_log_file)
             log_file.close()
+            os.remove('exec.log')
         else:
             super().save(*args, **kwargs)
         if self.execution_status != self.__old_execution_status:
@@ -55,9 +57,7 @@ class GitRepoController(models.Model):
                 self.stop()
 
     def run(self):
-        user_projects_path = os.path.join(self.repo.local_path, '..')
-        os.chdir(user_projects_path)
-
+        os.chdir(self.repo.local_path)
         process = subprocess.Popen(['/bin/bash', self.project_setup_bash_file.path],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -70,6 +70,7 @@ class GitRepoController(models.Model):
             f.write(stdout.decode('utf-8'))
 
     def stop(self):
-        os.kill(self.current_running_process_pid, signal.SIGKILL)
+        with suppress(ProcessLookupError):
+            os.kill(self.current_running_process_pid, signal.SIGKILL)
         self.current_running_process_pid = None
         super().save()

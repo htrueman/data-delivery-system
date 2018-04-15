@@ -11,8 +11,10 @@ export class LocalSpiderController {
     static changeCurrentSpiderState(command) {
         let formData = new FormData();
         if (command === singleSpiderManagerCommands.RUN) {
-            const form = document.getElementById("ctrl-form");
+            const form = document.getElementById('ctrl-form');
+            const pythonSelectValue = form.querySelector('select').value;
             formData = new FormData(form);
+            formData.append('python_version', pythonSelectValue);
         }
         formData.append('id', controllerId);
         formData.append('execution_status', command);

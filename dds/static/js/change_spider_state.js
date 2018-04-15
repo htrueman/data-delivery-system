@@ -10,10 +10,10 @@ export class ChangeSpiderState {
                 import('./manage_local_spider.js')
                     .then(({LocalSpiderController}) => {
                         let command = '';
-                        if (btn.id === 'run-spider') {
+                        if (btn.name === 'run') {
                             command = singleSpiderManagerCommands.RUN;
                         }
-                        else if (btn.id === 'stop-spider') {
+                        else if (btn.name === 'stop') {
                             command = singleSpiderManagerCommands.STOP;
                         }
                         new LocalSpiderController(command);
