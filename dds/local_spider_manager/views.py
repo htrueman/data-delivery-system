@@ -5,10 +5,9 @@ from .models import GitRepoController
 from .forms import GitRepoManagerForm
 
 
-class GitRepoInfo(DetailView, FormView):
+class GitRepoDetail(DetailView):
     model = GitRepository
-    template_name = 'local_spider_manager/manage_local_spider.html'
-    form_class = GitRepoManagerForm
+    template_name = 'local_spider_manager/local_spider_detail.html'
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -31,6 +30,23 @@ class GitRepoInfo(DetailView, FormView):
             context_data['controller_log_content'] = \
                 get_file_content(controller.project_exec_log_file.path)
 
+        context_data['controller'] = controller
+        return context_data
+
+
+class GitRepoEdit(FormView):
+    form_class = GitRepoManagerForm
+    template_name = 'local_spider_manager/local_spider_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data(**kwargs))
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data()
+        repo = GitRepository.objects.get(id=self.kwargs['pk'])
+        controller, is_created = \
+            GitRepoController.objects.get_or_create(repo=repo)
+        context_data['object'] = repo
         context_data['controller'] = controller
         return context_data
 

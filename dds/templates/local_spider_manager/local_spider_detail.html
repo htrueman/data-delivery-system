@@ -1,0 +1,15 @@
+{% extends 'local_spider_manager/base.html' %}
+
+{% block manager_content %}
+    <div class="row">
+        <div class="logs col-md-6">
+            {# TODO: push extra logs by sockets if log content > 512 lines #}
+            <h2>Execution log</h2>
+            {{ controller_log_content|linebreaks }}
+        </div>
+        <div class="sh-content col-md-6">
+            <h2>Bash script content</h2>
+            {{ controller_bash_content|linebreaks }}
+        </div>
+    </div>
+{% endblock %}

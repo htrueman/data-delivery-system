@@ -1,0 +1,10 @@
+{% extends 'local_spider_manager/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block manager_content %}
+    <div class="row">
+        <div class="ctrl-extra-data col-md-12">
+            {% crispy form %}
+        </div>
+    </div>
+{% endblock %}
